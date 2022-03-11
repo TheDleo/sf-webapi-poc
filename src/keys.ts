@@ -1,0 +1,1 @@
+export const JWT_SIGNATURE = "dfhasdiuvz9879ba0987d098a7f9a987bba987df0987asdvba98fgadf987a"

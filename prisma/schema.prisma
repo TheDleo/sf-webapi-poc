@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model hcmeta {
+  id      Int     @id @default(autoincrement())
+  hcver   Int?
+  org_id  String? @db.VarChar(50)
+  details String?
+
+  @@map("_hcmeta")
+}
+
+model sf_event_log {
+  id           Int       @id @default(autoincrement())
+  table_name   String?   @db.VarChar(128)
+  action       String?   @db.VarChar(7)
+  synced_at    DateTime? @default(now()) @db.Timestamptz(6)
+  sf_timestamp DateTime? @db.Timestamptz(6)
+  sfid         String?   @db.VarChar(20)
+  record       String?
+  processed    Boolean?
+
+  @@index([table_name, synced_at], map: "idx__sf_event_log_comp_key")
+  @@index([sfid], map: "idx__sf_event_log_sfid")
+  @@map("_sf_event_log")
+}
+
+model trigger_log {
+  id           Int       @id @default(autoincrement())
+  txid         BigInt?
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+  processed_at DateTime? @db.Timestamptz(6)
+  processed_tx BigInt?
+  state        String?   @db.VarChar(8)
+  action       String?   @db.VarChar(7)
+  table_name   String?   @db.VarChar(128)
+  record_id    Int?
+  sfid         String?   @db.VarChar(18)
+  old          String?
+  values       String?
+  sf_result    Int?
+  sf_message   String?
+
+  @@index([created_at], map: "_trigger_log_idx_created_at")
+  @@index([state, id], map: "_trigger_log_idx_state_id")
+  @@map("_trigger_log")
+}
+
+model trigger_log_archive {
+  id           Int       @id
+  txid         BigInt?
+  created_at   DateTime? @db.Timestamptz(6)
+  updated_at   DateTime? @db.Timestamptz(6)
+  processed_at DateTime? @db.Timestamptz(6)
+  processed_tx BigInt?
+  state        String?   @db.VarChar(8)
+  action       String?   @db.VarChar(7)
+  table_name   String?   @db.VarChar(128)
+  record_id    Int?
+  sfid         String?   @db.VarChar(18)
+  old          String?
+  values       String?
+  sf_result    Int?
+  sf_message   String?
+
+  @@index([created_at], map: "_trigger_log_archive_idx_created_at")
+  @@index([record_id], map: "_trigger_log_archive_idx_record_id")
+  @@map("_trigger_log_archive")
+}
+
+model account {
+  billingcity       String?   @db.VarChar(40)
+  site              String?   @db.VarChar(80)
+  name              String?   @db.VarChar(255)
+  phone             String?   @db.VarChar(40)
+  ownership         String?   @db.VarChar(255)
+  isdeleted         Boolean?
+  systemmodstamp    DateTime? @db.Timestamp(6)
+  billingpostalcode String?   @db.VarChar(20)
+  createddate       DateTime? @db.Timestamp(6)
+  billingstate      String?   @db.VarChar(80)
+  accountnumber     String?   @db.VarChar(40)
+  type              String?   @db.VarChar(255)
+  website           String?   @db.VarChar(255)
+  description       String?
+  industry          String?   @db.VarChar(255)
+  billingstreet     String?   @db.VarChar(255)
+  sfid              String?   @unique(map: "hcu_idx_account_sfid") @db.VarChar(18)
+  id                Int       @id @default(autoincrement())
+  hc_lastop         String?   @map("_hc_lastop") @db.VarChar(32)
+  hc_err            String?   @map("_hc_err")
+
+  @@index([systemmodstamp], map: "hc_idx_account_systemmodstamp")
+}
+
+model accountcontactrole {
+  createddate    DateTime? @db.Timestamp(6)
+  isdeleted      Boolean?
+  systemmodstamp DateTime? @db.Timestamp(6)
+  accountid      String?   @db.VarChar(18)
+  contactid      String?   @db.VarChar(18)
+  sfid           String?   @unique(map: "hcu_idx_accountcontactrole_sfid") @db.VarChar(18)
+  id             Int       @id @default(autoincrement())
+  hc_lastop      String?   @map("_hc_lastop") @db.VarChar(32)
+  hc_err         String?   @map("_hc_err")
+
+  @@index([systemmodstamp], map: "hc_idx_accountcontactrole_systemmodstamp")
+}
+
+model contact {
+  lastname       String?   @db.VarChar(80)
+  accountid      String?   @db.VarChar(18)
+  name           String?   @db.VarChar(121)
+  mobilephone    String?   @db.VarChar(40)
+  phone          String?   @db.VarChar(40)
+  isdeleted      Boolean?
+  systemmodstamp DateTime? @db.Timestamp(6)
+  external_id__c Float?    @unique(map: "hcu_idx_contact_external_id__c")
+  createddate    DateTime? @db.Timestamp(6)
+  firstname      String?   @db.VarChar(40)
+  email          String?   @db.VarChar(80)
+  sfid           String?   @unique(map: "hcu_idx_contact_sfid") @db.VarChar(18)
+  id             Int       @id @default(autoincrement())
+  hc_lastop      String?   @map("_hc_lastop") @db.VarChar(32)
+  hc_err         String?   @map("_hc_err")
+  masterrecordid String?   @db.VarChar(18)
+  salutation     String?   @db.VarChar(255)
+  password       String?   @map("webpass__c") @db.VarChar(64)
+
+  @@index([masterrecordid], map: "hc_idx_contact_masterrecordid")
+  @@index([systemmodstamp], map: "hc_idx_contact_systemmodstamp")
+}
