@@ -19,7 +19,6 @@ The API uses [Apollo Server](https://www.apollographql.com/docs/apollo-server/) 
 
 ### Some helpful commands
 1. Pull schema changes from the database and update the schema/schema.prisma file
-
 ```
 npx prisma db pull
 ```
@@ -30,14 +29,11 @@ npx prisma generate
 ```
 
 3. Update the database schema from changes made in the schema/schema.prisma file. (Be careful with this as it changes the schema and currently the schema is created by Heroku Connect)
-
 ```
 npx prisma db push
 ```
 
 4. Use Prisma Studio to view the database schema and data.
-
 ```
 npm prisma studio
 ```
-
