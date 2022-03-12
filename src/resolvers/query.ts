@@ -1,11 +1,11 @@
 import { Context } from "..";
 
 export const Query = {
-  contact: (_: any, args: any, { prisma }: Context) => {
+  contact: (_: any, { userId }: { userId: string}, { prisma }: Context) => {
     // if(!userInfo) return null
     return prisma.contact.findUnique({
       where: {
-        id: args.id
+        id: Number(userId)
       }
     })
   },

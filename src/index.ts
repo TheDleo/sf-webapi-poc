@@ -1,10 +1,12 @@
 import { ApolloServer } from "apollo-server"
 import { typeDefs } from "./schema"
-import { Query, Mutation } from "./resolvers"
+import { Query, Mutation, Contact, Account } from "./resolvers"
 import { PrismaClient, Prisma } from "@prisma/client"
 import { getUserFromToken } from "./utils/getUserFromToken"
 
-export const prisma = new PrismaClient()
+export const prisma = new PrismaClient({
+  log: ['info', 'query'],
+})
 
 export interface Context {
   prisma: PrismaClient<Prisma.PrismaClientOptions, never, Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined>
@@ -18,9 +20,8 @@ const server = new ApolloServer({
   resolvers: {
     Query,
     Mutation,
-    // Profile,
-    // Post,
-    // User
+    Contact,
+    Account
   },
   context: async ({ req }: any): Promise<Context> => {
     const userInfo = await getUserFromToken(req.headers.authorization)

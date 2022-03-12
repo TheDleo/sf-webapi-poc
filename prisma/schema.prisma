@@ -96,6 +96,7 @@ model account {
   id                Int       @id @default(autoincrement())
   hc_lastop         String?   @map("_hc_lastop") @db.VarChar(32)
   hc_err            String?   @map("_hc_err")
+  contacts          contact[]
 
   @@index([systemmodstamp], map: "hc_idx_account_systemmodstamp")
 }
@@ -133,6 +134,7 @@ model contact {
   masterrecordid String?   @db.VarChar(18)
   salutation     String?   @db.VarChar(255)
   password       String?   @map("webpass__c") @db.VarChar(64)
+  account        account?  @relation(fields: [accountid], references: [sfid])
 
   @@index([masterrecordid], map: "hc_idx_contact_masterrecordid")
   @@index([systemmodstamp], map: "hc_idx_contact_systemmodstamp")
